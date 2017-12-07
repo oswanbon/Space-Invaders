@@ -1,10 +1,12 @@
-#Part 6: Create an Ally
+#Part 7: Game Status / Score / Sound
 import os
 import random
 import turtle
 
 turtle.fd(0)
 turtle.speed(0)
+#set screen size and start location
+turtle.setup (width=800, height=800, startx=0, starty=0)
 turtle.bgcolor("black")
 turtle.ht()
 turtle.setundobuffer(1)
@@ -155,12 +157,24 @@ class Game():
             self.pen.rt(90) #turn right 90 degrees
         self.pen.penup() #lift pen so no more drawing
         self.pen.ht() #hide turtle
+        self.pen.pendown()
+
+    def show_status(self):
+        self.pen.undo()
+        msg = "Score: %s" %(self.score)
+        self.pen.penup()
+        self.pen.goto(-300,310)
+        self.pen.write(msg, font=("Arial", 16, "normal"))
+
 
 #Create game object
 game = Game()
 
 #Draw the game border
 game.draw_border()
+
+#Show game status
+game.show_status()
 
 #Create my sprites
 player = Player("triangle", "white", 0,0)
@@ -196,9 +210,24 @@ while True:
         y = random.randint(-250, 250)
         enemy.goto(x, y)
         missile.status = "ready"
+        #Increase the score
+        game.score += 100
+        game.show_status()
 
     if missile.is_collision(ally):
         x = random.randint(-250, 250)
         y = random.randint(-250, 250)
         ally.goto(x, y)
         missile.status = "ready"
+        #Decrease the score
+        game.score -= 50
+        game.show_status()
+
+    if player.is_collision(enemy):
+        x = random.randint(-250, 250)
+        y = random.randint(-250, 250)
+        enemy.goto(x, y)
+        missile.status = "ready"
+        #Decrease the score
+        game.score -= 100
+        game.show_status()
